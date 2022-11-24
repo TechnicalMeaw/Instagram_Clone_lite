@@ -31,7 +31,7 @@ class SplashScreenActivity : AppCompatActivity() {
         firebaseAppCheck.installAppCheckProviderFactory(
             PlayIntegrityAppCheckProviderFactory.getInstance()
         )
-
+//        FA5DD4B2-3923-455C-9E5E-11F7F23E4158
 
         val animFadeIn = AnimationUtils.loadAnimation(
             applicationContext,
@@ -43,18 +43,17 @@ class SplashScreenActivity : AppCompatActivity() {
         }, 500)
 
 
-        // Intent animation options
-        val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.splashTextView, "instagramIcon")
-
         Handler().postDelayed({
 
             // Check if user is signed in (non-null) and update UI accordingly.
             val currentUser = Firebase.auth.currentUser
             if (currentUser != null) {
                 val intent = Intent(this, HomeActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.splashTextView, "instagramIcon")
                 startActivity(intent, options.toBundle())
             }else{
                 val intent = Intent(this, LoginActivity::class.java)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.splashTextView, "instagramIcon")
                 startActivity(intent, options.toBundle())
             }
         }, 2000)

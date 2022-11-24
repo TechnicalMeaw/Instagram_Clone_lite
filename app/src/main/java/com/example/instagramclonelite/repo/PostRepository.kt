@@ -7,6 +7,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.instagramclonelite.firebaseClasses.LikeUnlikeItem
 import com.example.instagramclonelite.firebaseClasses.PostItem
+import com.example.instagramclonelite.firebaseClasses.UserPostItem
+import com.example.instagramclonelite.utils.CommonUtils.Companion.bitmapToByteArray
 import com.example.instagramclonelite.utils.Constants
 import com.example.instagramclonelite.utils.Constants.Companion.getAllPostReference
 import com.example.instagramclonelite.utils.Constants.Companion.getPostDislikeReference
@@ -50,9 +52,6 @@ class PostRepository {
     private fun updatePostToDatabase(
         post: PostItem
     ) {
-        val currentTime = System.currentTimeMillis()
-
-
         getAllPostReference().child(post.postId).setValue(post).addOnSuccessListener {
             updatePostToUserProfile(post.postId, post)
         }
@@ -60,38 +59,31 @@ class PostRepository {
 
     private fun updatePostToUserProfile(postId: String, postItem: PostItem) {
         getUserPostReference(FirebaseAuth.getInstance().uid.toString()).child(postId)
-            .setValue(postItem)
+            .setValue(UserPostItem(FirebaseAuth.getInstance().uid.toString(), postId))
     }
 
 
     private val postMap: HashMap<String, PostItem> = HashMap()
 
-    fun fetchPosts(){
-        getAllPostReference().addChildEventListener(object: ChildEventListener {
+    fun fetchPosts() {
+        getAllPostReference().addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(snapshot: DataSnapshot, previousChildName: String?) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     val post = snapshot.getValue(PostItem::class.java)
-                    if (post!= null){
+                    if (post != null) {
 
-
-                                postMap[snapshot.key.toString()] = post
-                                _allPosts.postValue(postMap.values.toList())
-
-
-
-                        /**
-                         * Scroll to the specific post
-                         */
+                        postMap[snapshot.key.toString()] = post
+                        _allPosts.postValue(postMap.values.toList())
 
                     }
                 }
             }
 
             override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {
-                if (snapshot.exists()){
+                if (snapshot.exists()) {
                     val post = snapshot.getValue(PostItem::class.java)
-                    if (post!= null){
-                        if (postMap.containsKey(snapshot.key.toString())){
+                    if (post != null) {
+                        if (postMap.containsKey(snapshot.key.toString())) {
                             postMap[snapshot.key.toString()] = post
                             _allPosts.postValue(postMap.values.toList())
                         }
@@ -100,7 +92,7 @@ class PostRepository {
             }
 
             override fun onChildRemoved(snapshot: DataSnapshot) {
-                if (postMap.containsKey(snapshot.key.toString())){
+                if (postMap.containsKey(snapshot.key.toString())) {
                     postMap.remove(snapshot.key.toString())
                     _allPosts.postValue(_allPosts.value?.toList() ?: listOf())
                 }
@@ -116,7 +108,6 @@ class PostRepository {
 
         })
     }
-
 
 
     fun addLike(postId: String) {
@@ -223,14 +214,6 @@ class PostRepository {
             }
 
         })
-    }
-
-    private fun bitmapToByteArray(bitmap: Bitmap, imageSize: Int): ByteArray {
-        val newBitmap = ImageResizer.generateThumb(bitmap, imageSize)
-        val stream = ByteArrayOutputStream()
-        newBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-
-        return stream.toByteArray()
     }
 
 }
