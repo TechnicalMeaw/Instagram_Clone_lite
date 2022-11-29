@@ -110,7 +110,7 @@ class PostRepository {
     }
 
 
-    fun qaddLike(postId: String) {
+    fun addLike(postId: String) {
         getSpecificPostReference(postId).addListenerForSingleValueEvent(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
