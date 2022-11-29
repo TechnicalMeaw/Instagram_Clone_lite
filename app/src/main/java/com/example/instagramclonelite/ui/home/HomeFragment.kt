@@ -55,11 +55,11 @@ class HomeFragment : Fragment(), PostListeners {
         binding.feedRecyclerView.layoutManager = LinearLayoutManager(this.requireContext())
         binding.feedRecyclerView.adapter = this.adapter
 
-        viewModel.getAllPosts().observe(viewLifecycleOwner, Observer {
-            if (it.isNotEmpty()){
+        viewModel.getAllPosts().observe(viewLifecycleOwner, Observer { postItems ->
+            if (postItems.isNotEmpty()){
                 binding.feedProgressBar.visibility = View.GONE
             }
-            adapter.updatePosts(it)
+            adapter.updatePosts(postItems.sortedBy { it.postTimeInMillis }.reversed())
         })
 
         return binding.root

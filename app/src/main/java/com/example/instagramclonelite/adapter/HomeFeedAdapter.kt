@@ -58,6 +58,7 @@ class HomeFeedAdapter(private val context: Context, private val listener: PostLi
     override fun onBindViewHolder(holder: FeedViewHolder, position: Int) {
         val currentPost = allPosts[position]
 
+
         val options: RequestOptions = RequestOptions()
             .placeholder(R.drawable.ic_profile)
             .error(R.drawable.ic_profile)

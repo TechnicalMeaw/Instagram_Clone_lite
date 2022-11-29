@@ -43,12 +43,13 @@ class ProfileFragment : Fragment() {
         if (user != null){
             binding.userProfileName.text = user.displayName
             Glide.with(this.requireContext()).load(user.photoUrl).into(binding.userDpCircleImageView)
+            binding.bioTextView.text = "Email: ${user.email}"
         }
 
         // Observe user activities
         viewModel.getUserActivityPosts(FirebaseAuth.getInstance().uid.toString()).observe(viewLifecycleOwner,
-            Observer {
-                adapter.updateUserActivities(it)
+            Observer { userPostItems ->
+                adapter.updateUserActivities(userPostItems.sortedBy { it.timeStamp })
             })
 
         return binding.root
